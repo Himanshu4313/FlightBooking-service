@@ -1,10 +1,12 @@
-const express = require('express');
+const express = require("express");
 const apiRoutes = require("./routes/index.js");
 const app = express();
 
+app.use(express.json()); // for json request and response
+app.use(express.urlencoded({ extended: true })); // for url encoded request and response
 
 //for routes
-app.use('/api',apiRoutes);
+app.use("/api", apiRoutes);
 
 app.use("/", (req, res) => {
   res.status(200).json({ message: "Hey welcome,to my Flight Booking server" });
