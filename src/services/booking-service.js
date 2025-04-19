@@ -109,8 +109,6 @@ async function makePayment(data) {
   }
 }
 
-
-
 async function cancelBooking(bookingId) {
   const transaction = await db.sequelize.transaction();
   try {
@@ -126,7 +124,7 @@ async function cancelBooking(bookingId) {
       `${FLIGHT_SERVICE_URL}/api/v1/flights/${bookingDetails.flightId}/seats`,
       {
         seats: bookingDetails.noOfSeats,
-        dec: 'false',
+        dec: "false",
       }
     );
 
@@ -143,8 +141,25 @@ async function cancelBooking(bookingId) {
     throw error;
   }
 }
+
+async function cancelOldBookingData() {
+  try {
+    // Current date and time
+    const now = new Date();
+
+    // Subtract 5 minutes (5 * 60 * 1000 milliseconds)
+    const thirtyMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+
+    const response = await bookingRepository.cancelOldBooking(thirtyMinutesAgo);
+    return response;
+  } catch (error) {
+    console.log("Error found :", error.message);
+    throw error;
+  }
+}
 module.exports = {
   createBooking,
   makePayment,
   cancelBooking,
+  cancelOldBookingData
 };
