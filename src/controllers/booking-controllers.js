@@ -47,6 +47,13 @@ async function makePayment(req, res) {
   }
 }
 
+
+// Here we right the logic for canceling a booking
+
+/**
+ * 
+ * code
+ */
 module.exports = {
   createBooking,
   makePayment,
