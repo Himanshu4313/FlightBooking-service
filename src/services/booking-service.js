@@ -50,6 +50,78 @@ async function createBooking(data) {
   }
 }
 
+async function makePayment(data) {
+  const transaction = await db.sequelize.transaction();
+  try {
+    /*
+      example 
+        data :{
+         
+         bookingId : 1,
+         userId: 1,
+         totalCost:15000
+        
+        }
+      */
+    const bookingDetails = await bookingRepository.get(
+      data.bookingId,
+      transaction
+    );
+
+    if (bookingDetails.status == "cancelled") {
+      throw new Error("Booking is expired");
+    }
+
+    // Time comparison to check if the booking is still active
+
+    const bookingTime = new Date(bookingDetails.createdAt);
+    const currentTime = new Date();
+
+
+    console.log(bookingTime , currentTime);
+    console.log(bookingTime-currentTime);
+    
+    if (currentTime - bookingTime > 300000) {
+      await bookingRepository.update(
+        data.bookingId,
+        { status: "cancelled" },
+        transaction
+      );
+
+      // here we write logic of increement of seats in the flight table
+           /**
+            * //code 
+            * 
+            */
+
+      throw new Error("Booking is expired");
+    }
+
+    if (bookingDetails.totalCost != data.totalCost) {
+      throw new Error("Total cost mismatch");
+    }
+
+    if (bookingDetails.userId != data.userId) {
+      throw new Error("User id mismatch");
+    }
+
+    //now assume the payment get success
+
+    await bookingRepository.update(
+      data.bookingId,
+      { status: "confirmed" },
+      transaction
+    );
+
+    await transaction.commit();
+  } catch (error) {
+    console.log("Error found :", error.message);
+    await transaction.rollback();
+    throw error;
+  }
+}
+
 module.exports = {
   createBooking,
+  makePayment,
 };
