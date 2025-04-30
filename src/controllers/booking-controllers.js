@@ -1,5 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
-const { bookingService } = require("../services");
+const { bookingService, bookingDetails } = require("../services");
 
 const inMemDB = {};
 
@@ -76,7 +76,33 @@ async function makePayment(req, res) {
  *
  * code
  */
+
+// This function for get Booking details of the user
+
+async function getbookingsDetails(req, res) {
+  try {
+    const userId = req.params.id;
+
+    const bookings = await bookingDetails.getBookingDetails(userId);
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Get Booking details successfully",
+      data: bookings,
+    });
+  } catch (error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message:
+        "Something went wrong while geting booking details of the user from booking server ",
+      data: {},
+      error: error,
+    });
+  }
+}
+
 module.exports = {
   createBooking,
   makePayment,
+  getbookingsDetails
 };

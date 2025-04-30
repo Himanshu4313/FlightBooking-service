@@ -57,5 +57,15 @@ class BookingRepository extends CrudRepository {
          return response;
   
   }
+
+
+  async getBookingDetailsByUserId(userId){
+        const result = await Booking.findAll({
+             where : {
+                 userId:userId
+             }
+        })
+        return result;
+  }
 }
 module.exports = BookingRepository;

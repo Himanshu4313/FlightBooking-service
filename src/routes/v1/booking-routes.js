@@ -8,5 +8,11 @@ router.post("/", bookingControllers.createBooking);
 router.post("/payments", bookingControllers.makePayment);
 
 
+// This route help for get  booking details of the user when user get about it.
+
+// id:userId
+router.get('/booking-details/:id',bookingControllers.getbookingsDetails);
+
+
 
 module.exports = router;
